@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { EmailModule } from './email/email.module';
 import { EmailConfirmationModule } from './emailConfirmation/emailConfirmation.module';
+import { LocalFilesModule } from './localFiles/localFiles.module';
 
 @Module({
   imports: [
@@ -31,11 +32,13 @@ import { EmailConfirmationModule } from './emailConfirmation/emailConfirmation.m
         EMAIL_SERVICE: Joi.string().required(),
         EMAIL_USER: Joi.string().required(),
         EMAIL_PASSWORD: Joi.string().required(),
+        UPLOADED_FILES_DESTINATION: Joi.string().required(),
       }),
     }),
     DatabaseModule,
     EmailModule,
     EmailConfirmationModule,
+    LocalFilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

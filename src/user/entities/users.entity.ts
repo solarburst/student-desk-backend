@@ -1,5 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  OneToOne,
+} from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { LocalFile } from '../../localFiles/localFile.entity';
 
 @Entity('users')
 export class UsersEntity {
@@ -39,5 +46,14 @@ export class UsersEntity {
   currentHashedRefreshToken?: string;
 
   @Column({ default: false })
-  public isEmailConfirmed: boolean;
+  isEmailConfirmed: boolean;
+
+  @JoinColumn({ name: 'avatarId' })
+  @OneToOne(() => LocalFile, {
+    nullable: true,
+  })
+  avatar?: LocalFile;
+
+  @Column({ nullable: true })
+  avatarId?: number;
 }

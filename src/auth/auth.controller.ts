@@ -7,9 +7,9 @@ import {
   Param,
   Delete,
   Req,
+  Res,
   HttpCode,
   UseGuards,
-  Res,
   ClassSerializerInterceptor,
   UseInterceptors,
 } from '@nestjs/common';
@@ -58,6 +58,7 @@ export class AuthController {
       accessTokenCookie,
       refreshTokenCookie,
     ]);
+
     return user;
   }
 

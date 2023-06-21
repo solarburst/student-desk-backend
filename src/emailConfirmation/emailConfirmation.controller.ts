@@ -4,6 +4,7 @@ import {
   UseInterceptors,
   Post,
   Body,
+  Param,
   UseGuards,
   Req,
 } from '@nestjs/common';
@@ -22,7 +23,7 @@ export class EmailConfirmationController {
   @Post('confirm')
   async confirm(@Body() confirmationData: ConfirmEmailDto) {
     const email = await this.emailConfirmationService.decodeConfirmationToken(
-      confirmationData.token,
+      confirmationData.token.toString(),
     );
     await this.emailConfirmationService.confirmEmail(email);
   }

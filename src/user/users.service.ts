@@ -1,16 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersEntity } from './entities/users.entity';
 import { hash, compare } from '../utils/crypto';
+import LocalFilesService from '../localFiles/localFiles.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UsersEntity)
     private usersRepository: Repository<UsersEntity>,
+    private localFilesService: LocalFilesService,
   ) {}
 
   async setCurrentRefreshToken(refreshToken: string, userId: number) {
@@ -58,6 +60,26 @@ export class UsersService {
       'User with this email does not exist',
       HttpStatus.NOT_FOUND,
     );
+  }
+
+  async getByVacancy(vacancy: string) {
+    const users = await this.usersRepository.find({});
+    if (users) {
+      const filteredUsers = users.filter((user) => {
+        if (
+          user.vacancy
+            .toLocaleLowerCase()
+            .includes(vacancy.toLocaleLowerCase()) ||
+          user.description
+            .toLocaleLowerCase()
+            .includes(vacancy.toLocaleLowerCase())
+        ) {
+          return true;
+        } else return false;
+      });
+      return filteredUsers;
+    }
+    return [];
   }
 
   async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
@@ -114,5 +136,12 @@ export class UsersService {
         isEmailConfirmed: true,
       },
     );
+  }
+
+  async addAvatar(userId: number, fileData: LocalFileDto) {
+    const avatar = await this.localFilesService.saveLocalFileData(fileData);
+    await this.usersRepository.update(userId, {
+      avatarId: avatar.id,
+    });
   }
 }
